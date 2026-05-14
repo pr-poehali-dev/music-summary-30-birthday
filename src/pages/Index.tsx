@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 
 const BARS_COUNT = 36;
 
-type Page = "welcome" | "track" | "moments" | "invite";
+type Page = "welcome" | "track" | "moments" | "stats" | "invite";
 
 const BAR_HEIGHTS = Array.from({ length: BARS_COUNT }, () =>
   Math.floor(10 + Math.random() * 75)
@@ -20,6 +20,7 @@ const Index = () => {
   const audio1Ref = useRef<HTMLAudioElement>(null);
   const audio2Ref = useRef<HTMLAudioElement>(null);
   const audio3Ref = useRef<HTMLAudioElement>(null);
+  const audio4Ref = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const a = audio1Ref.current;
@@ -37,6 +38,12 @@ const Index = () => {
     const a = audio3Ref.current;
     if (!a) return;
     if (page === "moments") { a.currentTime = 0; a.play().catch(() => {}); } else { a.pause(); a.currentTime = 0; }
+  }, [page]);
+
+  useEffect(() => {
+    const a = audio4Ref.current;
+    if (!a) return;
+    if (page === "stats") { a.currentTime = 0; a.play().catch(() => {}); } else { a.pause(); a.currentTime = 0; }
   }, [page]);
 
   // Генерируем салюты на странице moments
@@ -78,6 +85,7 @@ const Index = () => {
       <audio ref={audio1Ref} src="https://files.catbox.moe/g60wh0.mp3" loop />
       <audio ref={audio2Ref} src="https://files.catbox.moe/bivm2f.mp3" loop />
       <audio ref={audio3Ref} src="https://files.catbox.moe/fz4jxn.mp3" loop />
+      <audio ref={audio4Ref} src="https://files.catbox.moe/1j1ok7.mp3" loop />
 
       {/* Fireworks */}
       {fireworks.map(fw => (
@@ -232,14 +240,57 @@ const Index = () => {
 
             <button
               className="btn-main"
-              onClick={() => goTo("invite")}
+              onClick={() => goTo("stats")}
             >
               что там дальше? →
             </button>
           </div>
         )}
 
-        {/* ——— СТРАНИЦА 4: итоги/приглашение ——— */}
+        {/* ——— СТРАНИЦА 4: статистика ——— */}
+        {page === "stats" && (
+          <div className="page-col">
+            <p className="year-label">с т а т и с т и к а</p>
+            <h2 className="track-title" style={{ marginBottom: "1.8rem" }}>Наши цифры</h2>
+
+            <div className="stat-card stat-card-fancy">
+              <span className="stat-emoji">🗓️</span>
+              <span className="stat-question">Сколько мы дружим</span>
+              <span className="stat-num green">950</span>
+              <span className="stat-label">дней</span>
+            </div>
+
+            <div className="stat-card stat-card-fancy">
+              <span className="stat-emoji">🎂</span>
+              <span className="stat-question">Сколько раз ты была на моём дне рождения</span>
+              <span className="stat-num" style={{ fontSize: "1.1rem", lineHeight: 1.3, color: "#fff", fontWeight: 700 }}>
+                это будет<br /><span className="green">твой первый раз</span>
+              </span>
+            </div>
+
+            <div className="stat-card stat-card-fancy">
+              <span className="stat-emoji">💚</span>
+              <span className="stat-question">Как сильно я дорожу тобой</span>
+              <span className="stat-num green" style={{ fontSize: "1.5rem" }}>372 км/с</span>
+              <span className="stat-label">скорость болида F1 × 1000</span>
+            </div>
+
+            <div className="now-playing" style={{ margin: "1.2rem 0 1.4rem" }}>
+              <div className="np-bars"><span /><span /><span /><span /></div>
+              <span>играет трек, который ассоциируется с тобой</span>
+            </div>
+
+            <div className="stats-quote">
+              Я хочу разделить с тобой свои 30 лет и переход в новое десятилетие 🥂
+            </div>
+
+            <button className="btn-main btn-pulse" onClick={() => goTo("invite")}>
+              подробности →
+            </button>
+          </div>
+        )}
+
+        {/* ——— СТРАНИЦА 5: финал ——— */}
         {page === "invite" && (
           <div className="page-col">
             <p className="year-label">2 0 2 4  •  wrapped</p>
@@ -598,6 +649,49 @@ const Index = () => {
           font-size: 1.1rem;
           font-weight: 700;
           color: #fff;
+        }
+
+        /* ——— STATS PAGE ——— */
+        .stat-card-fancy {
+          flex-direction: column;
+          gap: 0.3rem;
+          padding: 1.3rem 1.6rem 1.4rem;
+          margin-bottom: 0.8rem;
+          position: relative;
+          overflow: hidden;
+        }
+        .stat-card-fancy::before {
+          content: '';
+          position: absolute;
+          left: 0; top: 0; bottom: 0;
+          width: 3px;
+          background: var(--green);
+          border-radius: 3px 0 0 3px;
+        }
+        .stat-emoji {
+          font-size: 1.5rem;
+          margin-bottom: 0.2rem;
+        }
+        .stat-question {
+          font-size: 0.78rem;
+          color: var(--muted);
+          font-family: 'Rubik', sans-serif;
+          letter-spacing: 0.03em;
+          margin-bottom: 0.5rem;
+          font-weight: 400;
+        }
+        .stats-quote {
+          background: linear-gradient(135deg, rgba(29,185,84,0.12), rgba(29,185,84,0.04));
+          border: 1px solid rgba(29,185,84,0.25);
+          border-radius: 14px;
+          padding: 1.3rem 1.5rem;
+          font-family: 'Rubik', sans-serif;
+          font-size: 1rem;
+          color: #fff;
+          line-height: 1.65;
+          margin-bottom: 1.6rem;
+          width: 100%;
+          font-weight: 400;
         }
 
         /* ——— INVITE PAGE ——— */
