@@ -148,7 +148,7 @@ const Index = () => {
         {/* ——— СТРАНИЦА 1: приветствие ——— */}
         {page === "welcome" && (
           <div className="page-col">
-            <p className="year-label">2 0 2 4</p>
+            <p className="year-label">2 0 2 6</p>
             <h1 className="main-title">
               не просто<br />
               <span className="green">музыкальные</span><br />
@@ -338,7 +338,17 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="now-playing" style={{ margin: "1rem 0 0.5rem" }}>
+            <a
+              className="btn-wishlist"
+              href="https://docs.google.com/spreadsheets/d/1Ku3rdanulnFMoDGRRYnycAnj4sJThtFrm7mCLC-oufE/edit?gid=0#gid=0"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>🎁</span>
+              wishlist
+            </a>
+
+            <div className="now-playing" style={{ margin: "0.8rem 0 0.5rem" }}>
               <div className="np-bars"><span /><span /><span /><span /></div>
               <span>сейчас играет</span>
             </div>
@@ -816,6 +826,32 @@ const Index = () => {
           line-height: 1.45;
           font-weight: 300;
         }
+
+        .btn-wishlist {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: transparent;
+          color: var(--green);
+          border: 2px solid var(--green);
+          border-radius: 50px;
+          padding: 0.85rem 2rem;
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 800;
+          font-size: 0.95rem;
+          letter-spacing: 0.06em;
+          text-decoration: none;
+          cursor: pointer;
+          margin-top: 1.2rem;
+          transition: background 0.18s, color 0.18s, transform 0.18s, box-shadow 0.18s;
+        }
+        .btn-wishlist:hover {
+          background: var(--green);
+          color: #000;
+          transform: scale(1.04);
+          box-shadow: 0 0 24px 4px rgba(29,185,84,0.3);
+        }
+        .btn-wishlist:active { transform: scale(0.97); }
 
         /* ——— INVITE PAGE ——— */
         .stat-card {
