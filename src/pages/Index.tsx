@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 
 const BARS_COUNT = 36;
 
-type Page = "welcome" | "track" | "invite";
+type Page = "welcome" | "track" | "moments" | "invite";
 
 const BAR_HEIGHTS = Array.from({ length: BARS_COUNT }, () =>
   Math.floor(10 + Math.random() * 75)
@@ -14,29 +14,48 @@ const Index = () => {
   const [transitioning, setTransitioning] = useState(false);
   const [visible, setVisible] = useState(true);
 
-  const audio1Ref = useRef<HTMLAudioElement>(null); // первый трек
-  const audio2Ref = useRef<HTMLAudioElement>(null); // трек на второй странице
+  const [fireworks, setFireworks] = useState<{id:number;x:number;y:number;color:string}[]>([]);
+  const fwCounter = useRef(0);
+
+  const audio1Ref = useRef<HTMLAudioElement>(null);
+  const audio2Ref = useRef<HTMLAudioElement>(null);
+  const audio3Ref = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const a = audio1Ref.current;
     if (!a) return;
-    if (musicStarted && page === "welcome") {
-      a.play().catch(() => {});
-    } else {
-      a.pause();
-    }
+    if (musicStarted && page === "welcome") { a.play().catch(() => {}); } else { a.pause(); }
   }, [musicStarted, page]);
 
   useEffect(() => {
     const a = audio2Ref.current;
     if (!a) return;
-    if (page === "track") {
-      a.currentTime = 0;
-      a.play().catch(() => {});
-    } else {
-      a.pause();
-      a.currentTime = 0;
-    }
+    if (page === "track") { a.currentTime = 0; a.play().catch(() => {}); } else { a.pause(); a.currentTime = 0; }
+  }, [page]);
+
+  useEffect(() => {
+    const a = audio3Ref.current;
+    if (!a) return;
+    if (page === "moments") { a.currentTime = 0; a.play().catch(() => {}); } else { a.pause(); a.currentTime = 0; }
+  }, [page]);
+
+  // Генерируем салюты на странице moments
+  useEffect(() => {
+    if (page !== "moments") return;
+    const COLORS = ["#1DB954","#FFD700","#FF6B6B","#A78BFA","#38BDF8","#FB923C","#F472B6"];
+    const interval = setInterval(() => {
+      const newFw = Array.from({ length: 3 }, () => ({
+        id: ++fwCounter.current,
+        x: 10 + Math.random() * 80,
+        y: 5 + Math.random() * 60,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      }));
+      setFireworks(prev => [...prev.slice(-18), ...newFw]);
+      setTimeout(() => {
+        setFireworks(prev => prev.filter(f => !newFw.find(n => n.id === f.id)));
+      }, 1200);
+    }, 600);
+    return () => clearInterval(interval);
   }, [page]);
 
   const handleStart = () => {
@@ -58,6 +77,20 @@ const Index = () => {
     <div className="spira-root">
       <audio ref={audio1Ref} src="https://files.catbox.moe/g60wh0.mp3" loop />
       <audio ref={audio2Ref} src="https://files.catbox.moe/bivm2f.mp3" loop />
+      <audio ref={audio3Ref} src="https://files.catbox.moe/fz4jxn.mp3" loop />
+
+      {/* Fireworks */}
+      {fireworks.map(fw => (
+        <div
+          key={fw.id}
+          className="firework"
+          style={{ left: `${fw.x}%`, top: `${fw.y}%`, "--fw-color": fw.color } as React.CSSProperties}
+        >
+          {Array.from({length: 12}).map((_, i) => (
+            <div key={i} className="fw-particle" style={{ "--angle": `${i * 30}deg` } as React.CSSProperties} />
+          ))}
+        </div>
+      ))}
 
       {/* Background bars — всегда видны, оживают с музыкой */}
       <div className="bg-bars">
@@ -164,14 +197,49 @@ const Index = () => {
 
             <button
               className="btn-main"
-              onClick={() => goTo("invite")}
+              onClick={() => goTo("moments")}
             >
-              далее →
+              что там дальше? →
             </button>
           </div>
         )}
 
-        {/* ——— СТРАНИЦА 3: итоги/приглашение ——— */}
+        {/* ——— СТРАНИЦА 3: моменты ——— */}
+        {page === "moments" && (
+          <div className="page-col">
+            <p className="year-label">м о м е н т ы</p>
+
+            <h2 className="track-title" style={{ marginBottom: "1.6rem" }}>Момент с тобой</h2>
+
+            <div className="moments-card">
+              <p className="moments-text">
+                Помнишь, как мы сидели у меня и играли в нашу знаменитую «вечериночку»?
+                А как гуляли по городу и потом ели корейскую еду?
+                А как прошли огромное количество квизов?
+              </p>
+              <div className="moments-divider" />
+              <p className="moments-thanks">
+                Спасибо тебе за эти моменты 💚
+              </p>
+            </div>
+
+            <div className="now-playing" style={{ marginBottom: "1.8rem" }}>
+              <div className="np-bars">
+                <span /><span /><span /><span />
+              </div>
+              <span>сейчас играет</span>
+            </div>
+
+            <button
+              className="btn-main"
+              onClick={() => goTo("invite")}
+            >
+              что там дальше? →
+            </button>
+          </div>
+        )}
+
+        {/* ——— СТРАНИЦА 4: итоги/приглашение ——— */}
         {page === "invite" && (
           <div className="page-col">
             <p className="year-label">2 0 2 4  •  wrapped</p>
@@ -193,8 +261,8 @@ const Index = () => {
                 Приходи праздновать 🎂
               </p>
             </div>
-            <button className="btn-main" onClick={() => goTo("welcome")}>
-              ← сначала
+            <button className="btn-main" onClick={() => goTo("moments")}>
+              ← назад
             </button>
           </div>
         )}
@@ -476,6 +544,60 @@ const Index = () => {
           color: var(--muted);
           line-height: 1.65;
           font-weight: 300;
+        }
+
+        /* ——— FIREWORKS ——— */
+        .firework {
+          position: fixed;
+          pointer-events: none;
+          z-index: 1;
+          transform: translate(-50%, -50%);
+        }
+        .fw-particle {
+          position: absolute;
+          width: 3px;
+          height: 3px;
+          border-radius: 50%;
+          background: var(--fw-color, #1DB954);
+          top: 50%; left: 50%;
+          transform-origin: center center;
+          animation: fwExplode 1.1s ease-out forwards;
+          transform: rotate(var(--angle)) translateY(0px);
+        }
+        @keyframes fwExplode {
+          0%   { transform: rotate(var(--angle)) translateY(0px);   opacity: 1; width: 3px; height: 3px; }
+          60%  { transform: rotate(var(--angle)) translateY(55px);  opacity: 0.9; }
+          100% { transform: rotate(var(--angle)) translateY(80px);  opacity: 0; width: 2px; height: 2px; }
+        }
+
+        /* ——— MOMENTS PAGE ——— */
+        .moments-card {
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 18px;
+          padding: 1.8rem 1.6rem;
+          margin-bottom: 1.6rem;
+          width: 100%;
+          text-align: left;
+        }
+        .moments-text {
+          font-family: 'Rubik', sans-serif;
+          font-size: 1rem;
+          color: #e0e0e0;
+          line-height: 1.75;
+          font-weight: 300;
+        }
+        .moments-divider {
+          width: 32px; height: 2px;
+          background: var(--green);
+          border-radius: 2px;
+          margin: 1.2rem 0;
+        }
+        .moments-thanks {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #fff;
         }
 
         /* ——— INVITE PAGE ——— */
