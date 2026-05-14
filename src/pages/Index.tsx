@@ -21,6 +21,7 @@ const Index = () => {
   const audio2Ref = useRef<HTMLAudioElement>(null);
   const audio3Ref = useRef<HTMLAudioElement>(null);
   const audio4Ref = useRef<HTMLAudioElement>(null);
+  const audio5Ref = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const a = audio1Ref.current;
@@ -44,6 +45,12 @@ const Index = () => {
     const a = audio4Ref.current;
     if (!a) return;
     if (page === "stats") { a.currentTime = 0; a.play().catch(() => {}); } else { a.pause(); a.currentTime = 0; }
+  }, [page]);
+
+  useEffect(() => {
+    const a = audio5Ref.current;
+    if (!a) return;
+    if (page === "invite") { a.currentTime = 0; a.play().catch(() => {}); } else { a.pause(); a.currentTime = 0; }
   }, [page]);
 
   // Генерируем салюты на странице moments
@@ -86,6 +93,7 @@ const Index = () => {
       <audio ref={audio2Ref} src="https://files.catbox.moe/bivm2f.mp3" loop />
       <audio ref={audio3Ref} src="https://files.catbox.moe/fz4jxn.mp3" loop />
       <audio ref={audio4Ref} src="https://files.catbox.moe/1j1ok7.mp3" loop />
+      <audio ref={audio5Ref} src="https://files.catbox.moe/qwm15w.mp3" loop />
 
       {/* Fireworks */}
       {fireworks.map(fw => (
@@ -293,28 +301,47 @@ const Index = () => {
         {/* ——— СТРАНИЦА 5: финал ——— */}
         {page === "invite" && (
           <div className="page-col">
-            <p className="year-label">2 0 2 4  •  wrapped</p>
-            <div className="stat-card">
-              <span className="stat-num green">30</span>
-              <span className="stat-label">лет — и впереди всё самое лучшее</span>
+            <p className="year-label">п р и г л а ш е н и е</p>
+
+            <div className="final-hero">
+              <div className="final-date-badge">27 июня</div>
+              <p className="final-time">в 17:30</p>
             </div>
-            <div className="stat-card">
-              <span className="stat-num">∞</span>
-              <span className="stat-label">причин отметить</span>
+
+            <div className="final-address-card">
+              <div className="final-address-row">
+                <span className="final-address-icon">📍</span>
+                <div>
+                  <p className="final-address-main">Московский проспект, 139А</p>
+                  <p className="final-address-sub">м. Электросила · вход с торца здания через железную калитку</p>
+                </div>
+              </div>
+              <div className="final-address-row" style={{ marginTop: "0.8rem" }}>
+                <span className="final-address-icon">📞</span>
+                <p className="final-address-sub">Мой номер ты знаешь!</p>
+              </div>
             </div>
-            <div className="stat-card">
-              <span className="stat-num green">1</span>
-              <span className="stat-label">незабываемый вечер</span>
+
+            <div className="final-program">
+              <p className="final-program-title">Что тебя ждёт?</p>
+              <div className="final-program-item">
+                <span className="final-program-time green">17:30 – 18:30</span>
+                <span className="final-program-text">Сбор, лёгкий перекус, первые тосты</span>
+              </div>
+              <div className="final-program-item">
+                <span className="final-program-time green">18:30 – 20:30</span>
+                <span className="final-program-text">Вкусно едим, вкусно пьём и проходим квиз по Иришке</span>
+              </div>
+              <div className="final-program-item">
+                <span className="final-program-time green">20:30 – 22:00</span>
+                <span className="final-program-text">Слушаем музыку, общаемся</span>
+              </div>
             </div>
-            <div className="invite-box">
-              <p className="invite-text">
-                Ты в топе моего плейлиста.<br />
-                Приходи праздновать 🎂
-              </p>
+
+            <div className="now-playing" style={{ margin: "1rem 0 0.5rem" }}>
+              <div className="np-bars"><span /><span /><span /><span /></div>
+              <span>сейчас играет</span>
             </div>
-            <button className="btn-main" onClick={() => goTo("moments")}>
-              ← назад
-            </button>
           </div>
         )}
       </div>
@@ -692,6 +719,102 @@ const Index = () => {
           margin-bottom: 1.6rem;
           width: 100%;
           font-weight: 400;
+        }
+
+        /* ——— FINAL PAGE ——— */
+        .final-hero {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-bottom: 1.4rem;
+        }
+        .final-date-badge {
+          background: var(--green);
+          color: #000;
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 900;
+          font-size: 2.2rem;
+          letter-spacing: -0.02em;
+          padding: 0.5rem 1.8rem;
+          border-radius: 50px;
+          margin-bottom: 0.5rem;
+          line-height: 1.1;
+        }
+        .final-time {
+          font-size: 1.1rem;
+          color: var(--muted);
+          font-family: 'Rubik', sans-serif;
+          font-weight: 300;
+          letter-spacing: 0.08em;
+        }
+        .final-address-card {
+          background: var(--card);
+          border: 1px solid rgba(255,255,255,0.07);
+          border-radius: 16px;
+          padding: 1.3rem 1.4rem;
+          width: 100%;
+          margin-bottom: 1.2rem;
+          text-align: left;
+        }
+        .final-address-row {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+        .final-address-icon { font-size: 1.2rem; margin-top: 0.05rem; flex-shrink: 0; }
+        .final-address-main {
+          font-size: 1rem;
+          font-weight: 700;
+          color: #fff;
+          font-family: 'Montserrat', sans-serif;
+          margin-bottom: 0.25rem;
+        }
+        .final-address-sub {
+          font-size: 0.82rem;
+          color: var(--muted);
+          font-family: 'Rubik', sans-serif;
+          line-height: 1.5;
+        }
+        .final-program {
+          background: rgba(29,185,84,0.06);
+          border: 1px solid rgba(29,185,84,0.18);
+          border-radius: 16px;
+          padding: 1.3rem 1.4rem;
+          width: 100%;
+          text-align: left;
+          margin-bottom: 0.5rem;
+        }
+        .final-program-title {
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 800;
+          font-size: 0.85rem;
+          color: #fff;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          margin-bottom: 1rem;
+        }
+        .final-program-item {
+          display: flex;
+          flex-direction: column;
+          gap: 0.15rem;
+          margin-bottom: 0.9rem;
+          padding-left: 0.4rem;
+          border-left: 2px solid rgba(29,185,84,0.35);
+          padding-left: 0.8rem;
+        }
+        .final-program-item:last-child { margin-bottom: 0; }
+        .final-program-time {
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 800;
+          font-size: 0.8rem;
+          letter-spacing: 0.04em;
+        }
+        .final-program-text {
+          font-family: 'Rubik', sans-serif;
+          font-size: 0.88rem;
+          color: #d0d0d0;
+          line-height: 1.45;
+          font-weight: 300;
         }
 
         /* ——— INVITE PAGE ——— */
